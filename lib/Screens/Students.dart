@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-
+import 'package:authentification/Constant/Constant.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 class Students extends StatefulWidget {
   @override
@@ -94,6 +94,8 @@ class _StudentsState extends State<Students> {
                         values.forEach((key, values) {
                           lists.add(values);
                         });
+                        count = lists.length;
+                        data = lists;
                         return new ListView.builder(
                             shrinkWrap: true,
                             itemCount: lists.length,
@@ -120,42 +122,6 @@ class _StudentsState extends State<Students> {
                       }
                       return CircularProgressIndicator();
                     }),
-                // StreamBuilder(
-                //   stream: reference.onValue,
-                //   builder: (context, AsyncSnapshot snapshot) {
-                //     if (snapshot.hasData) {
-                //       lists.clear();
-                //       Map<dynamic, dynamic> values = snapshot.data.value;
-                //       values.forEach((key, values) {
-                //         lists.add(values);
-                //       });
-                //       return new ListView.builder(
-                //           physics: const AlwaysScrollableScrollPhysics(),
-                //           itemCount: lists.length,
-                //           itemBuilder: (BuildContext context, int index) {
-                //             return Card(
-                //               child: Column(
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: <Widget>[
-                //                   Row(
-                //                     crossAxisAlignment:
-                //                         CrossAxisAlignment.center,
-                //                     mainAxisAlignment:
-                //                         MainAxisAlignment.spaceBetween,
-                //                     children: [
-                //                       Text(lists[index]["name"]),
-                //                       Text(lists[index]["attention_Level"]),
-                //                       Text(lists[index]["meditation_Level"]),
-                //                     ],
-                //                   ),
-                //                 ],
-                //               ),
-                //             );
-                //           });
-                //     }
-                //     return CircularProgressIndicator();
-                //   },
-                // )
               ],
             ),
           )),

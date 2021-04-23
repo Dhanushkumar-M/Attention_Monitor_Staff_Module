@@ -1,7 +1,6 @@
+import 'package:authentification/Constant/Constant.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:percent_indicator/percent_indicator.dart';
 
 class Dashboard extends StatefulWidget {
@@ -9,14 +8,75 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
-  DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('DataStore');
-  List<Map<dynamic, dynamic>> lists = [];
+final reference = FirebaseDatabase.instance.reference().child('DataStore');
 
-  int stdPresent = 90;
-  int stdClass = 0;
-  int good, low, medium = 0;
+class _DashboardState extends State<Dashboard> {
+  int att = 0, medi = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  double overall() {
+    int att = 0, medi = 0;
+    for (int i = 0; i < data.length; i++) {
+      if (int.parse(data[i]["attention_Level"]) > 0) {
+        att += int.parse(data[i]["attention_Level"]);
+      }
+    }
+    for (int i = 0; i < data.length; i++) {
+      if (int.parse(data[i]["meditation_Level"]) > 0) {
+        medi += int.parse(data[i]["meditation_Level"]);
+      }
+    }
+    double mean = (att + medi) / 4;
+
+    return mean;
+  }
+
+  int Good() {
+    int counter = 0;
+    for (int i = 0; i < data.length; i++) {
+      if (int.parse(data[i]["attention_Level"]) +
+              int.parse(data[i]["meditation_Level"]) >
+          120) {
+        counter += 1;
+      }
+    }
+    return counter;
+  }
+
+  int Medium() {
+    int counter = 0;
+    for (int i = 0; i < data.length; i++) {
+      if ((int.parse(data[i]["attention_Level"]) +
+                  int.parse(data[i]["meditation_Level"])) >
+              80 &&
+          (int.parse(data[i]["attention_Level"]) +
+                  int.parse(data[i]["meditation_Level"])) <
+              120) {
+        counter += 1;
+      }
+    }
+    return counter;
+  }
+
+  int Low() {
+    int counter = 0;
+    for (int i = 0; i < data.length; i++) {
+      if (int.parse(data[i]["attention_Level"]) +
+              int.parse(data[i]["meditation_Level"]) <
+          80) {
+        counter += 1;
+      }
+    }
+    return counter;
+  }
+
+  int stdPresent = count;
+  int stdClass = 54;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,7 +127,7 @@ class _DashboardState extends State<Dashboard> {
                   Expanded(
                       child: Center(
                     child: Text(
-                      "57",
+                      stdClass.toString(),
                       style: TextStyle(fontSize: 22),
                     ),
                   )),
@@ -84,7 +144,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   alignment: Alignment.bottomLeft,
                   child: Center(
-                    child: Text('OverAll Attention Level',
+                    child: Text('OverAll Focus Level',
                         style: TextStyle(
                           fontSize: 26,
                         )),
@@ -98,9 +158,9 @@ class _DashboardState extends State<Dashboard> {
                   radius: 180.0,
                   lineWidth: 18.0,
                   animation: true,
-                  percent: stdPresent / 100,
+                  percent: overall() / 100,
                   center: new Text(
-                    stdPresent.toString(),
+                    overall().toString() + " %",
                     style: new TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20.0),
                   ),
@@ -159,21 +219,21 @@ class _DashboardState extends State<Dashboard> {
                   Expanded(
                       child: Center(
                     child: Text(
-                      "00",
+                      Good().toString(),
                       style: TextStyle(fontSize: 22, color: Colors.green),
                     ),
                   )),
                   Expanded(
                       child: Center(
                     child: Text(
-                      "00",
+                      Medium().toString(),
                       style: TextStyle(fontSize: 22, color: Colors.yellow),
                     ),
                   )),
                   Expanded(
                       child: Center(
                     child: Text(
-                      "00",
+                      Low().toString(),
                       style: TextStyle(fontSize: 22, color: Colors.red),
                     ),
                   ))
